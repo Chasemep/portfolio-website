@@ -13,10 +13,6 @@ if DATABASE_URL.startswith("postgres://"):
 elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-# Safely print the host to verify what URL is actually being loaded
-parsed_host = DATABASE_URL.split("@")[-1].split(":")[0] if "@" in DATABASE_URL else "unknown"
-print(f"DEBUG: Attempting to connect to database host: {parsed_host}")
-
 engine = create_async_engine(DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
