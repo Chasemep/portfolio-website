@@ -15,7 +15,7 @@ app = FastAPI(title="Portfolio API")
 # Configure CORS
 origins = [
     "http://localhost:3000",
-    # Add production frontend URL here later
+    "https://portfolio-website-oypg.onrender.com",
 ]
 
 app.add_middleware(
@@ -29,6 +29,10 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+
+@app.get("/")
+async def root():
+    return {"message": "Portfolio API is running"}
 
 @app.get("/health")
 async def health_check():
