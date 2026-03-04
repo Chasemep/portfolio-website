@@ -2,9 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from dotenv import load_dotenv
 from database import get_db, init_db
 
@@ -64,48 +63,29 @@ async def submit_contact(form: ContactForm):
     if not form.captcha_token:
         raise HTTPException(status_code=400, detail="CAPTCHA token required")
     
-    # Email notification logic
-    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", 587))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_pass = os.getenv("SMTP_PASSWORD")
+    # SendGrid Email Logic
+    sendgrid_api_key = os.getenv("SENDGRID_API_KEY")
+    sender_email = os.getenv("SENDGRID_SENDER", "chasemep05@gmail.com")
     receiver_email = os.getenv("EMAIL_RECEIVER", "chasemep05@gmail.com")
 
-    print(f"DEBUG: Attempting to send email to {receiver_email} via {smtp_host}:{smtp_port}")
-    print(f"DEBUG: Using User: {smtp_user}")
-
-    if not all([smtp_user, smtp_pass]):
-        print("DEBUG: SMTP credentials missing in environment variables.")
+    if not sendgrid_api_key:
+        print("Warning: SENDGRID_API_KEY not configured. Skipping email.")
         return {"message": "Message received (email skipped)"}
 
+    message = Mail(
+        from_email=sender_email,
+        to_emails=receiver_email,
+        subject=f"New Portfolio Contact from {form.name}",
+        plain_text_content=f"Name: {form.name}\nEmail: {form.email}\n\nMessage:\n{form.message}"
+    )
+
     try:
-        # Create message
-        msg = MIMEMultipart()
-        msg['From'] = smtp_user
-        msg['To'] = receiver_email
-        msg['Subject'] = f"New Portfolio Contact from {form.name}"
-
-        body = f"Name: {form.name}\nEmail: {form.email}\n\nMessage:\n{form.message}"
-        msg.attach(MIMEText(body, 'plain'))
-
-        # Send email
-        if smtp_port == 465:
-            print("DEBUG: Connecting via SMTP_SSL (Port 465)")
-            with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
-                server.login(smtp_user, smtp_pass)
-                server.send_message(msg)
-        else:
-            print(f"DEBUG: Connecting via standard SMTP (Port {smtp_port})")
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.send_message(msg)
-            
-        print("DEBUG: Email sent successfully")
+        sg = SendGridAPIClient(sendgrid_api_key)
+        response = sg.send(message)
+        print(f"SendGrid Success: {response.status_code}")
         return {"message": "Message received and email sent"}
     except Exception as e:
-        print(f"DEBUG: SMTP Error details: {type(e).__name__}: {e}")
-        # We still return success to the user, but log the error
+        print(f"SendGrid Error: {e}")
         return {"message": "Message received, but notification failed", "error": str(e)}
 
 if __name__ == "__main__":
