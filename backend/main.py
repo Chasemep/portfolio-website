@@ -71,9 +71,11 @@ async def submit_contact(form: ContactForm):
     smtp_pass = os.getenv("SMTP_PASSWORD")
     receiver_email = os.getenv("EMAIL_RECEIVER", "chasemep05@gmail.com")
 
+    print(f"DEBUG: Attempting to send email to {receiver_email} via {smtp_host}:{smtp_port}")
+    print(f"DEBUG: Using User: {smtp_user}")
+
     if not all([smtp_user, smtp_pass]):
-        # Fallback for local dev if env vars are missing
-        print("Warning: SMTP credentials not configured. Skipping email.")
+        print("DEBUG: SMTP credentials missing in environment variables.")
         return {"message": "Message received (email skipped)"}
 
     try:
@@ -88,18 +90,21 @@ async def submit_contact(form: ContactForm):
 
         # Send email
         if smtp_port == 465:
+            print("DEBUG: Connecting via SMTP_SSL (Port 465)")
             with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
         else:
+            print(f"DEBUG: Connecting via standard SMTP (Port {smtp_port})")
             with smtplib.SMTP(smtp_host, smtp_port) as server:
                 server.starttls()
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
             
+        print("DEBUG: Email sent successfully")
         return {"message": "Message received and email sent"}
     except Exception as e:
-        print(f"Error sending email: {e}")
+        print(f"DEBUG: SMTP Error details: {type(e).__name__}: {e}")
         # We still return success to the user, but log the error
         return {"message": "Message received, but notification failed", "error": str(e)}
 
