@@ -78,6 +78,7 @@ async def submit_contact(form: ContactForm):
         subject=f"New Portfolio Contact from {form.name}",
         plain_text_content=f"Name: {form.name}\nEmail: {form.email}\n\nMessage:\n{form.message}"
     )
+    message.reply_to = form.email
 
     try:
         sg = SendGridAPIClient(sendgrid_api_key)
