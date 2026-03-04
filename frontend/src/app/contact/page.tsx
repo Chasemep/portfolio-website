@@ -36,7 +36,7 @@ export default function ContactPage() {
             <div className="bg-white dark:bg-neutral-900 p-8 rounded-3xl shadow-lg border border-neutral-200 dark:border-neutral-800">
                 <h1 className="text-3xl font-extrabold mb-6">Contact Me</h1>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-8">
-                    Fill out the form below and I'll get back to you as soon as possible.
+                    Fill out the form below and I'll get back to you as soon as possible. (Note: submission may take a few minutes to send)
                 </p>
 
                 {status === "success" && (
