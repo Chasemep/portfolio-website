@@ -4,8 +4,8 @@ export default function AboutPage() {
             <h1 className="text-4xl font-extrabold tracking-tight mb-8">About Me</h1>
             <div className="space-y-6 text-lg text-neutral-700 dark:text-neutral-300">
                 <p>
-                    I am a versatile developer with a foundational background in solving complex problems. I enjoy working across the stack,
-                    from architecting scalable backends to crafting polished, responsive user interfaces.
+                    I am an ambitious software developer with experience in web development and data analysis. I am dedicated to building high-quality, reliable software through strong collaboration and attention to detail.
+                    I am proficient in analytical tools and collaborative coding platforms, with a growing interest in leadership and team management.
                 </p>
                 <p>
                     My core competencies span across Software Engineering, Machine Learning, and Data Science. I'm always eager to learn new technologies and apply them to real-world scenarios.

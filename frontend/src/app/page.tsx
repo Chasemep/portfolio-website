@@ -8,7 +8,7 @@ export default function Home() {
           Hi, I'm <span className="text-blue-500">Chase</span>
         </h1>
         <p className="mt-6 text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
-          I'm a passionate developer specializing in Software Engineering, Data Science, ML Engineering, and Full Stack Development. Let's build something amazing together.
+          I'm an ambitious developer specializing in Software Engineering, Data Science, ML Engineering, and Full Stack Development. Let's create innovative solutions together.
         </p>
         <div className="mt-10 flex gap-4 justify-center">
           <Link href="/projects" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-all shadow-lg hover:shadow-blue-500/25">
